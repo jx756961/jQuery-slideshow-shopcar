@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        body {
+            background: orange;
+        }
+
+        div.screen {
+            width: 600px;
+            height: 300px;
+            background: #ccc;
+            margin: 50px auto 0px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img {
+            width: 500%;
+            position: absolute;
+            left: 0px;
+        }
+
+        .img li {
+            float: left;
+            width: 600px;
+            height: 300px;
+        }
+
+        .img li img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .num {
+            width: 100%;
+            height: 30px;
+            position: absolute;
+            bottom: 10px;
+            text-align: center;
+        }
+
+        .num li {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: orange;
+            display: inline-block;
+        }
+
+        .num li.on {
+            background: green;
+        }
+
+        .move {
+            width: 100%;
+            position: absolute;
+            top: 40%;
+            background: red;
+            display: none;
+        }
+
+        .screen:hover .move {
+            display: block;
+        }
+
+        .move li {
+            position: absolute;
+            font-size: 40px;
+            background: rgba(0, 0, 0, .6);
+            width: 40px;
+            color: #fff;
+            text-align: center;
+        }
+
+        .move li.lt {
+            left: 0px;
+        }
+
+        .move li.rt {
+            right: 0px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="screen">
+    <ul class="img">
+        <li>
+            <img src="images/1.jpg"/>
+        </li>
+        <li>
+            <img src="images/2.jpg"/>
+        </li>
+        <li>
+            <img src="images/3.jpg"/>
+        </li>
+    </ul>
+    <ul class="num">
+        <li class="on"></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <ul class="move">
+        <li class="lt">&lt;</li>
+        <li class="rt">&gt;</li>
+    </ul>
+</div>
+<script src="jquery-3.1.1.min.js"></script>
+<script>
+    $(function () {
+        /* 定义全局位置初始值 */
+        var i = 0;
+        /* 克隆第一个图片对象 */
+        var a = $(".img li").first().clone();
+        $(".img").append(a);
+
+        /* 默认计时器 */
+        timer = setInterval(function () {
+            i++;
+            if (i == 4) {
+                $(".img").css({left: '0px'});
+                i = 1;
+            }
+            $(".img").animate({left: -i * 600 + 'px'});
+            if (i == 3) {
+                $('.num li').eq(0).addClass('on').siblings().removeClass('on');
+            } else {
+                $('.num li').eq(i).addClass('on').siblings().removeClass('on');
+            }
+        }, 1000);
+
+
+        /* 鼠标滑过/移出 进行计时器开始与停止 */
+        $(".screen").mouseover(function () {
+            clearInterval(timer);
+        })
+        $(".screen").mouseout(function () {
+            timer = setInterval(function () {
+                i++;
+                if (i == 4) {
+                    $(".img").css({left: '0px'});
+                    i = 1;
+                }
+                $(".img").animate({left: -i * 600 + 'px'});
+                if (i == 3) {
+                    $('.num li').eq(0).addClass('on').siblings().removeClass('on');
+                } else {
+                    $('.num li').eq(i).addClass('on').siblings().removeClass('on');
+                }
+            }, 1000);
+        })
+
+        /* 数字点操作 */
+        $(".num li").mouseover(function () {
+            /* 获取当前操作的索引 */
+            var index = $(this).index();
+
+            /* 设置当前索引至全局位置 */
+            i = index;
+            $(".img").animate({left: -i * 600 + 'px'});
+            $('.num li').eq(i).addClass('on').siblings().removeClass('on');
+        });
+
+        /* 左右移动操作 */
+
+        //左按钮
+        $(".lt").click(function () {
+            i++;
+            if (i == 4) {
+                $(".img").css({left: '0px'});
+                i = 1;
+            }
+            $(".img").animate({left: -i * 600 + 'px'});
+            if (i == 3) {
+                $('.num li').eq(0).addClass('on').siblings().removeClass('on');
+            } else {
+                $('.num li').eq(i).addClass('on').siblings().removeClass('on');
+            }
+        })
+
+        //右按钮
+        $(".rt").click(function () {
+            i--;
+            if (i == -1) {
+                $(".img").css({left: '-1800px'});
+                i = 2;
+            }
+            $(".img").animate({left: -i * 600 + 'px'});
+            $('.num li').eq(i).addClass('on').siblings().removeClass('on');
+        })
+    })
+</script>
+</body>
+</html>

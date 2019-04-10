@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>购物车功能</title>
+	<style>
+		table{
+			width:800px;
+			margin:0px auto;
+			border:1px solid #ccc;
+		}
+		tr{
+			height: 50px;
+			line-height: 50px;
+		}
+		tr:first-child{
+			background: #999;
+		}
+		p{
+			width:800px;
+			height: 40px;
+			line-height: 40px;
+			text-align: right;
+			margin:0px auto;
+		}
+	</style>
+</head>
+<body>
+	<table>
+		<tr align="center">
+			<td>
+                 <input type="checkbox" class='all'>全选
+			</td>
+			<td>商品信息</td>
+			<td>单价</td>
+			<td>数量</td>
+			<td>金额</td>
+			<td>操作</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<input type="checkbox" class="list-check" value="1">
+			</td>
+			<td>
+				秋冬职业装女装套装长裤修身女士西服工装正装面试学生西装工作服
+			</td>
+			<td>
+				<span class="price_1">265.50</span>
+			</td>
+			<td>
+				<input type="button" value="-" name="1" class="do">
+				<span class="num_1">3</span>
+				<input type="button" value="+"  name="1" class="do">
+			</td>
+			<td>
+				<span class="total_1">796.50</span>
+			</td>
+			<td>
+				<a href="#">删除</a>
+			</td>
+		</tr>
+		<tr align="center">
+			<td>
+				<input type="checkbox" class="list-check" value="2">
+			</td>
+			<td>
+				2016夏季乐福鞋男 一脚蹬懒人鞋英伦休闲鞋男韩版潮流透气男板鞋
+			</td>
+			<td>
+				<span class="price_2">200</span>
+			</td>
+			<td>
+				<input type="button" value="-" name="2" class="do">
+				<span class="num_2">1</span>
+				<input type="button" value="+" name="2" class="do">
+			</td>
+			<td>
+				<span class="total_2">200</span>
+			</td>
+			<td>
+				<a href="#">删除</a>
+			</td>
+		</tr>
+	</table>
+	<p>
+		已选商品<span class="num">0</span>件合计（不含运费）： ￥<span class="price">0.00</span>
+	</p>
+	<script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			function getListMessage(){
+				/* 获取选择复选框 */
+				var a = $(".list-check:checked");
+
+				/* 处理全选bug功能 */
+				if(a.length == $(".list-check").length){
+					$(".all").prop('checked',true);
+				}else{
+					$(".all").prop('checked',false);
+				}
+
+				/*
+					[1]    不选中
+					[2]    不选中
+					[3]    选中
+
+					a    = 复选框:checked
+					长度 = 1
+					循环1次
+
+					a.eq(0).val() 的值为 2
+				 */
+
+				//获取选择商品数量 并设置到底部的商品总览
+				$(".num").text(a.length);
+				//设置存储总价的变量
+				var total = 0;
+				//循环遍历复选框的集合
+				for(var i=0;i<a.length;i++){
+
+					//依次获取到当前循环复选框的value值
+					var myVal = a.eq(i).val();
+
+					//获取商品单价 通过price_链接当前复选框的value值
+					var thisPrice = $(".price_"+myVal).text();
+
+					//获取商品数量 通过num_链接当前复选框的value值
+					var thisNum = $(".num_"+myVal).text();
+
+					//计算总价
+					total += thisPrice*thisNum;
+				}
+				$(".price").text(total);
+
+			}
+
+
+
+
+
+			/* 监听所有商品行前面的复选框改变事件 */
+			$(".list-check").change(function(){
+				getListMessage();
+			})
+
+
+			/* 
+				全选/反选 功能
+				绑定对象类名为all的复选框
+			 */
+			$(".all").change(function(){
+				//获取当前操作全选/反选复选框的状态 true标签选中 false 表示未选中
+				var state = $(this).prop("checked");
+				//如果为选中 则让类名称为list-check的复选框选中，反之同理
+				$(".list-check").prop("checked",state);
+
+				getListMessage();
+			})
+
+			/* +-按钮监听事件 */
+			$(".do").click(function(){
+				//获取点击当前按钮的value
+				var thisV = this.value;
+
+				//获取当前点击按钮的name值
+				var thisN = this.name;
+
+				//通过上面获取按钮的name值去找到当前这一行的数量为几  并且进行转换成整数类型
+				var numT  = parseInt($(".num_"+thisN).text());
+
+				//通过上面获取按钮的name值找到单价 并进行2位小数处理
+				var price = parseFloat($(".price_"+thisN).text()).toFixed(2);
+
+				//判断数量为1 并且点击按钮是减号 停止代码执行 从而实现数量为1不进行数量减法功能
+				if(numT == 1 && thisV == '-'){
+					return false;
+				}
+
+				//创建变量 保存改变的数量值
+				var sum = 0
+
+				//如果为-按钮 进行数量-1 反之同理
+				if(thisV == '-'){
+					sum = numT-1;
+				}else{
+					sum = numT+1;
+				}
+
+				/*
+					if(thisV == '-'){
+						$(".num_"+thisN).text(numT-1);
+					}else{
+						$(".num_"+thisN).text(numT+1);
+					}
+				*/
+
+				//通过当前点击按钮的name值 找到对象 设置对象的内容为sum 就是改变后的数量
+				$(".num_"+thisN).text(sum);
+				//通过当前点击按钮的name值 找到对象 设置对象的内容为总价格 通过数量*单价
+				$(".total_"+thisN).text(sum*price);
+
+				getListMessage();
+			})
+
+
+
+
+		})
+	</script>
+</body>
+</html>
